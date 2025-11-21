@@ -3,109 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Basketball Bounce</title>
     <style>
         body{
-    color: #eee;
-    font-family:    ;
-    margin: 0;
-    background-image:
-    repeating-linear-gradient(
-        to right, #2d2a44 0 1px, transparent 2px 200px
-    ),
-    repeating-linear-gradient(
-        to bottom, #2d2a44 0 1px, transparent 2px 200px
-    ),
-    radial-gradient(
-        at 50% 50%, #2d2a44, #1d1b34
-    );
-}
-::-webkit-scrollbar{
-    width: 0;
-}
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    list-style: none;
-}
-header img{
-    width: 30px;
-}
-header{
-    width: min(1200px, 90vw);
-    margin: auto;
-    height: 70px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-header nav ul{
-    display: flex;
-    gap: 30px;
-}
-main{
-}
-main .banner{
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    text-align: center;
-    margin-top: -70px;
-}
-h1, h2, h3, h4, h5, h6{
-    font-weight: 500;
-}
-.banner button{
-    all: unset;
-    border: 1px solid #afaeae55;
-    padding: 10px 20px;
-    border-radius: 20px;
-    background-image: linear-gradient(
-        to bottom, #eee1, transparent, #eee1
-    );
-    cursor: pointer;
-    transition: 0.5s;
-}
-.banner button:hover{
-    background-color: #c691e6;
-    color: #040018;
-    box-shadow: 0 0 50px #c691e6;
-   
-}
-h1{
-    --to: left;
-    font-size: 4em;
-    font-weight: bold;
-    background-image: linear-gradient(
-        to var(--to), #89a5df, #e46e7f, #e8e191
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-transform: uppercase;
-    line-height: 1em;
-
-
-}
-h1.right{
-    --to: right;
-}
-
-
-.banner{
-    position: relative;
-}
-.banner #dotsCanvas{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-}
+            color: #eee;
+            margin: 0;
+            background-image:
+                repeating-linear-gradient(
+                    to right, #2d2a44 0 1px, transparent 2px 200px
+                ),
+                repeating-linear-gradient(
+                    to bottom, #2d2a44 0 1px, transparent 2px 200px
+                ),
+                radial-gradient(
+                    at 50% 50%, #2d2a44, #1d1b34
+                );
+        }
+        ::-webkit-scrollbar{
+            width: 0;
+        }
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            list-style: none;
+        }
+        header img{
+            width: 30px;
+        }
+        header{
+            width: min(1200px, 90vw);
+            margin: auto;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header nav ul{
+            display: flex;
+            gap: 30px;
+        }
+        main .banner{
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            text-align: center;
+            margin-top: -70px;
+        }
+        h1, h2, h3, h4, h5, h6{
+            font-weight: 500;
+        }
+        .banner button{
+            all: unset;
+            border: 1px solid #afaeae55;
+            padding: 10px 20px;
+            border-radius: 20px;
+            background-image: linear-gradient(
+                to bottom, #eee1, transparent, #eee1
+            );
+            cursor: pointer;
+            transition: 0.5s;
+        }
+        .banner button:hover{
+            background-color: #c691e6;
+            color: #040018;
+            box-shadow: 0 0 50px #c691e6;
+        
+        }
+        h1{
+            --to: left;
+            font-size: 4em;
+            font-weight: bold;
+            background-image: linear-gradient(
+                to var(--to), #89a5df, #e46e7f, #e8e191
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            line-height: 1em;
+        }
+        h1.right{
+            --to: right;
+        }
+        .banner{
+            position: relative;
+        }
+        .banner #dotsCanvas{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -134,82 +127,180 @@ h1.right{
                 <br>update interesting videos
             </h4>
             <button>Subscribe Now &#8599</button>
-            <canvas id="dotsCanvas"></canvas>
+            <canvas id="basketballCanvas"></canvas>
         </div>
     </main>    
 
     <script>
+        // You can replace this with your own Basketball PNG
+        const BASKETBALL_PNG = 'https://upload.wikimedia.org/wikipedia/commons/7/7a/Basketball.png';
+
         let banner = document.querySelector('.banner');
-        let canvas = document.getElementById('dotsCanvas');
-        // set canvas size to banner size
-        canvas.width = banner.offsetWidth;
-        canvas.height = banner.offsetHeight;
-        const ctx = canvas.getContext('2d');
-        let dots = [];
-        const dotsCount = 100;
-        const arrayColors = ['#eee', '#545454', '#596d91', '#bb5a68', '#696541'];
+        let canvas = document.getElementById('basketballCanvas');
+        let ctx = canvas.getContext('2d');
 
-        // Create dots (no blinking, no shine)
-        function createDot() {
-            let angle = Math.random() * 2 * Math.PI;
-            let speed = Math.random() * 0.5 + 0.3;
-            return {
-                x:  Math.random() * canvas.width,
-                y:  Math.random() * canvas.height,
-                size: Math.random() * 3 + 5,
-                color: arrayColors[Math.floor(Math.random() * arrayColors.length)],
-                vx:  Math.cos(angle) * speed,
-                vy:  Math.sin(angle) * speed
-            };
-        }
-
-        function initDots() {
-            dots = [];
-            for (let i = 0; i < dotsCount; i++) {
-                dots.push(createDot());
-            }
-        }
-        initDots();
-
-        // Draw dots: Just simple filled colored circles
-        function drawDots() {
-            dots.forEach(dot => {
-                ctx.save();
-                ctx.globalAlpha = 1;
-                ctx.fillStyle = dot.color;
-                ctx.beginPath();
-                ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI*2);
-                ctx.fill();
-                ctx.restore();
-            });
-        }
-
-        // Animate dots: Bounce off edges, not blinking or shiny
-        function animateDots() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // Move
-            dots.forEach(dot => {
-                dot.x += dot.vx;
-                dot.y += dot.vy;
-                // Bounce off edges
-                if(dot.x <= dot.size && dot.vx < 0) dot.vx *= -1;
-                if(dot.x >= canvas.width - dot.size && dot.vx > 0) dot.vx *= -1;
-                if(dot.y <= dot.size && dot.vy < 0) dot.vy *= -1;
-                if(dot.y >= canvas.height - dot.size && dot.vy > 0) dot.vy *= -1;
-            });
-            drawDots();
-            requestAnimationFrame(animateDots);
-        }
-
-        window.addEventListener('resize', () => {
+        // Adjust canvas size
+        function setCanvasSize() {
             canvas.width = banner.offsetWidth;
             canvas.height = banner.offsetHeight;
-            initDots();
+        }
+        setCanvasSize();
+        window.addEventListener('resize', setCanvasSize);
+
+        // Basketball object
+        const ballImg = new Image();
+        ballImg.src = BASKETBALL_PNG;
+
+        // Ball properties
+        let ball = {
+            x: canvas.width / 2,
+            y: canvas.height - 80,
+            r: 48,
+            vx: 0,
+            vy: 0,
+            gravity: 0.82,
+            bounce: 0.77,
+            dragging: false,
+            offsetX: 0,
+            offsetY: 0
+        };
+
+        // Ensure center when resized
+        function resetBallPositionIfOutOfCanvas() {
+            if (ball.x < ball.r) ball.x = ball.r + 2;
+            if (ball.x > canvas.width - ball.r) ball.x = canvas.width - ball.r - 2;
+            if (ball.y > canvas.height - ball.r) ball.y = canvas.height - ball.r - 2;
+            if (ball.y < ball.r) ball.y = ball.r + 2;
+        }
+        window.addEventListener('resize', ()=>{
+            resetBallPositionIfOutOfCanvas();
         });
 
-        // Initial drawing call
-        requestAnimationFrame(animateDots);
+        // Draw the ball
+        function drawBall() {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2);
+            ctx.closePath();
+            ctx.clip();
+            if (ballImg.complete) {
+                ctx.drawImage(ballImg, ball.x - ball.r, ball.y - ball.r, ball.r*2, ball.r*2);
+            } else {
+                ctx.fillStyle = '#ff7f27';
+                ctx.fill(); // fallback if PNG isn't loaded yet
+            }
+            ctx.restore();
+        }
 
+        // Physics update
+        function updateBall() {
+            if (!ball.dragging) {
+                ball.vy += ball.gravity;
+                ball.y += ball.vy;
+                ball.x += ball.vx;
+
+                // Ground collision
+                if (ball.y + ball.r > canvas.height) {
+                    ball.y = canvas.height - ball.r;
+                    ball.vy *= -ball.bounce;
+                    if (Math.abs(ball.vy) < 1) ball.vy = 0; // threshold stop
+                }
+                // Left/Right wall collision
+                if (ball.x - ball.r < 0) {
+                    ball.x = ball.r;
+                    ball.vx *= -ball.bounce;
+                }
+                if (ball.x + ball.r > canvas.width) {
+                    ball.x = canvas.width - ball.r;
+                    ball.vx *= -ball.bounce;
+                }
+
+                // slow down vx due to friction if on ground
+                if (ball.y + ball.r >= canvas.height && Math.abs(ball.vy) < 2) {
+                    ball.vx *= 0.96;
+                    if (Math.abs(ball.vx) < 0.07) ball.vx = 0;
+                }
+            }
+        }
+
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updateBall();
+            drawBall();
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Mouse events for dragging
+        let dragging = false;
+
+        function isBallHit(mx, my) {
+            return Math.sqrt((mx - ball.x) ** 2 + (my - ball.y) ** 2) <= ball.r;
+        }
+
+        function getPointerPosition(e) {
+            let rect = canvas.getBoundingClientRect();
+            if (e.touches) {
+                return {
+                    x: e.touches[0].clientX - rect.left,
+                    y: e.touches[0].clientY - rect.top
+                }
+            } else {
+                return {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                }
+            }
+        }
+
+        function dragStart(e) {
+            let pos = getPointerPosition(e);
+            if (isBallHit(pos.x, pos.y)) {
+                dragging = true;
+                ball.dragging = true;
+                ball.offsetX = pos.x - ball.x;
+                ball.offsetY = pos.y - ball.y;
+                ball.vx = 0; ball.vy = 0;
+            }
+        }
+        function dragMove(e) {
+            if (!dragging) return;
+            let pos = getPointerPosition(e);
+            ball.x = pos.x - ball.offsetX;
+            ball.y = pos.y - ball.offsetY;
+            // Avoid out of canvas
+            if (ball.x < ball.r) ball.x = ball.r;
+            if (ball.x > canvas.width - ball.r) ball.x = canvas.width - ball.r;
+            if (ball.y < ball.r) ball.y = ball.r;
+            if (ball.y > canvas.height - ball.r) ball.y = canvas.height - ball.r;
+        }
+        function dragEnd(e) {
+            if (dragging) {
+                dragging = false;
+                ball.dragging = false;
+                // Set new velocity based on last movement
+                // For a more realistic drag end, you can store prev positions and calc velocity
+            }
+        }
+
+        // Mouse Events
+        canvas.addEventListener('mousedown', dragStart);
+        canvas.addEventListener('mousemove', dragMove);
+        window.addEventListener('mouseup', dragEnd);
+
+        // Touch Events
+        canvas.addEventListener('touchstart', dragStart, {passive:false});
+        canvas.addEventListener('touchmove', dragMove, {passive:false});
+        window.addEventListener('touchend', dragEnd);
+
+        // Re-center ball after image load, if needed
+        ballImg.onload = function() {
+            if (ball.x === 0 && ball.y === 0) {
+                ball.x = canvas.width/2;
+                ball.y = canvas.height/2;
+            }
+        };
     </script>
 </body>
 </html>
