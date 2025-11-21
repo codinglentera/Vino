@@ -220,3 +220,191 @@
                 ball.y > ring.y &&
                 Math.abs(ball.x - ring.x) < ring.rInner &&
                 ball.vy > 4
+            );
+        }
+
+        function triggerSurprise() {
+            surprise.active = true;
+            surprise.timer = 0;
+
+            const particleCount = 24;
+            surprise.particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                const angle = (Math.PI * 2 * i) / particleCount;
+                surprise.particles.push({
+                    x: ring.x,
+                    y: ring.y + ring.rOuter,
+                    vx: Math.cos(angle) * (Math.random() * 5 + 3),
+                    vy: Math.sin(angle) * (Math.random() * 5 + 3),
+                    color: `hsl(${Math.random() * 360},90%,60%)`,
+                    r: Math.random() * 5 + 7
+                });
+            }
+        }
+
+        function updateSurprise() {
+            if (surprise.active) {
+                surprise.timer++;
+                surprise.particles.forEach((p) => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.15;
+                    p.vx *= 0.98;
+                    p.vy *= 0.98;
+                });
+                if (surprise.timer > surprise.max) {
+                    surprise.active = false;
+                }
+            }
+        }
+
+        function drawSurprise() {
+            if (!surprise.active) return;
+            surprise.particles.forEach(p => {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, 1 - surprise.timer / surprise.max);
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+                ctx.restore();
+            });
+
+            ctx.save();
+            let pulse = 1 + 0.2 * Math.sin(surprise.timer / surprise.max * Math.PI * 3);
+            ctx.lineWidth = ring.thickness * pulse;
+            ctx.strokeStyle = "#ffd700";
+            ctx.beginPath();
+            ctx.arc(ring.x, ring.y, ring.rOuter, Math.PI * 0.15, Math.PI - Math.PI * 0.15, false);
+            ctx.globalAlpha = 0.4 + 0.6 * Math.abs(Math.cos(surprise.timer / surprise.max * Math.PI));
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = "#ffd700";
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function updateBall() {
+            if (!ball.dragging) {
+                ball.vy += ball.gravity;
+                ball.y += ball.vy;
+                ball.x += ball.vx;
+
+                if (ball.y + ball.r > canvas.height) {
+                    ball.y = canvas.height - ball.r;
+                    ball.vy *= -ball.bounce;
+                    if (Math.abs(ball.vy) < 1) ball.vy = 0;
+                }
+
+                if (ball.x - ball.r < 0) {
+                    ball.x = ball.r;
+                    ball.vx *= -ball.bounce;
+                }
+                if (ball.x + ball.r > canvas.width) {
+                    ball.x = canvas.width - ball.r;
+                    ball.vx *= -ball.bounce;
+                }
+
+                if (ball.y + ball.r >= canvas.height && Math.abs(ball.vy) < 2) {
+                    ball.vx *= 0.96;
+                    if (Math.abs(ball.vx) < 0.07) ball.vx = 0;
+                }
+            }
+        }
+
+        let ballWasInRing = false;
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawRing();
+            updateBall();
+            drawBall();
+
+            const inRing = isBallInRing();
+            if (inRing && !ballWasInRing) {
+                triggerSurprise();
+            }
+            ballWasInRing = inRing;
+
+            updateSurprise();
+            drawSurprise();
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // ========== THROWING SYSTEM ==========
+        let dragging = false;
+        let dragHistory = [];
+
+        function isBallHit(mx, my) {
+            return Math.hypot(mx - ball.x, my - ball.y) <= ball.r;
+        }
+        function getPointerPosition(e) {
+            let rect = canvas.getBoundingClientRect();
+            if (e.touches) {
+                return {
+                    x: e.touches[0].clientX - rect.left,
+                    y: e.touches[0].clientY - rect.top
+                };
+            }
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        function dragStart(e) {
+            let pos = getPointerPosition(e);
+            if (isBallHit(pos.x, pos.y)) {
+                dragging = true;
+                ball.dragging = true;
+                ball.offsetX = pos.x - ball.x;
+                ball.offsetY = pos.y - ball.y;
+                ball.vx = 0;
+                ball.vy = 0;
+
+                dragHistory = [{ x: pos.x, y: pos.y, t: performance.now() }];
+            }
+        }
+
+        function dragMove(e) {
+            if (!dragging) return;
+            let pos = getPointerPosition(e);
+            ball.x = pos.x - ball.offsetX;
+            ball.y = pos.y - ball.offsetY;
+
+            ball.x = Math.max(ball.r, Math.min(canvas.width - ball.r, ball.x));
+            ball.y = Math.max(ball.r, Math.min(canvas.height - ball.r, ball.y));
+
+            dragHistory.push({ x: pos.x, y: pos.y, t: performance.now() });
+            if (dragHistory.length > 5) dragHistory.shift();
+        }
+
+        function dragEnd() {
+            if (!dragging) return;
+
+            dragging = false;
+            ball.dragging = false;
+
+            if (dragHistory.length >= 2) {
+                let p1 = dragHistory[dragHistory.length - 2];
+                let p2 = dragHistory[dragHistory.length - 1];
+                let dt = (p2.t - p1.t) / 1000;
+
+                if (dt > 0) {
+                    ball.vx = (p2.x - p1.x) / dt * 0.12;
+                    ball.vy = (p2.y - p1.y) / dt * 0.12;
+                }
+            }
+            dragHistory = [];
+        }
+
+        canvas.addEventListener('mousedown', dragStart);
+        canvas.addEventListener('mousemove', dragMove);
+        window.addEventListener('mouseup', dragEnd);
+
+        canvas.addEventListener('touchstart', dragStart, { passive: false });
+        canvas.addEventListener('touchmove', dragMove, { passive: false });
+        window.addEventListener('touchend', dragEnd);
+    </script>
+</body>
+</html>
