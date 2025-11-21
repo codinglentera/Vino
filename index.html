@@ -149,32 +149,41 @@ h1.right{
         const dotsCount = 100;
         const arrayColors = ['#eee', '#545454', '#596d91', '#bb5a68', '#696541'];
 
-        // Dots initialization with velocity properties
+        // Dots initialization with velocity and blink properties
         for (let i = 0; i < dotsCount; i++) {
             let angle = Math.random() * 2 * Math.PI;
             let speed = Math.random() * 0.5 + 0.3; // Speeds range from 0.3 to 0.8
+            let blinkPhase = Math.random() * Math.PI * 2; // random phase for blinking
+            let blinkSpeed = Math.random() * 1.5 + 0.5; // different blink rates
             dots.push({
                 x:  Math.random() * canvas.width,
                 y:  Math.random() * canvas.height,
                 size: Math.random() * 3 + 5,
                 color: arrayColors[Math.floor(Math.random() * arrayColors.length)],
                 vx:  Math.cos(angle) * speed,
-                vy:  Math.sin(angle) * speed
+                vy:  Math.sin(angle) * speed,
+                blinkPhase: blinkPhase,
+                blinkSpeed: blinkSpeed
             });
         }
 
         // Draw dots
-        function drawDots() {
+        function drawDots(time) {
             dots.forEach(dot => {
+                // Blinking logic: sinusoidal alpha based on time + random phase
+                let alpha = 0.4 + 0.6 * Math.abs(Math.sin(time * dot.blinkSpeed + dot.blinkPhase));
+                ctx.save();
+                ctx.globalAlpha = alpha;
                 ctx.fillStyle = dot.color;
                 ctx.beginPath();
                 ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI*2);
                 ctx.fill();
+                ctx.restore();
             });
         }
 
         // Animate dots movement
-        function animateDots() {
+        function animateDots(time) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             // Move dots
             dots.forEach(dot => {
@@ -184,7 +193,7 @@ h1.right{
                 if(dot.x <= dot.size || dot.x >= canvas.width - dot.size) dot.vx *= -1;
                 if(dot.y <= dot.size || dot.y >= canvas.height - dot.size) dot.vy *= -1;
             });
-            drawDots();
+            drawDots(time * 0.002); // scale time for visually pleasing blinking
             // Draw lines to mouse if present
             if(mouse.active) {
                 dots.forEach(dot => {
@@ -224,24 +233,27 @@ h1.right{
         window.addEventListener('resize', () => {
             canvas.width = banner.offsetWidth;
             canvas.height = banner.offsetHeight;
-            // reposition dots randomly
             dots = [];
             for (let i = 0; i < dotsCount; i++) {
                 let angle = Math.random() * 2 * Math.PI;
                 let speed = Math.random() * 0.5 + 0.3;
+                let blinkPhase = Math.random() * Math.PI * 2;
+                let blinkSpeed = Math.random() * 1.5 + 0.5;
                 dots.push({
                     x:  Math.random() * canvas.width,
                     y:  Math.random() * canvas.height,
                     size: Math.random() * 3 + 5,
                     color: arrayColors[Math.floor(Math.random() * arrayColors.length)],
                     vx:  Math.cos(angle) * speed,
-                    vy:  Math.sin(angle) * speed
+                    vy:  Math.sin(angle) * speed,
+                    blinkPhase: blinkPhase,
+                    blinkSpeed: blinkSpeed
                 });
             }
         });
 
         // Initial drawing call
-        animateDots();
+        requestAnimationFrame(animateDots);
 
     </script>
 </body>
