@@ -124,91 +124,125 @@ h1.right{
     </header>
     <main>
         <div class="banner">
-            <h5>@Wawan</h5>
+            <h5>@Artt_zzz</h5>
             <div>
                 <h1 class="left">Welcome to My Coding</h1>
-                <h1 class="right">wawan</h1>
+                <h1 class="right">Mr. Art</h1>
             </div>
             <h4>
                 Subscribe to the channel to continuously
                 <br>update interesting videos
             </h4>
             <button>Subscribe Now &#8599</button>
-
-
             <canvas id="dotsCanvas"></canvas>
         </div>
     </main>    
 
-
-
-
     <script>
         let banner = document.querySelector('.banner');
-let canvas = document.getElementById('dotsCanvas');
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
-const ctx = canvas.getContext('2d');
-let dots = [];
-const arrayColors = ['#eee', '#545454', '#596d91', '#bb5a68', '#696541'];
-for (let index = 0; index < 100; index++) {
-    dots.push({
-        x:  Math.floor(Math.random() * canvas.width),
-        y:  Math.floor(Math.random() * canvas.height),
-        size: Math.random() * 3 + 5,
-        color: arrayColors[Math.floor(Math.random()* 5)]
-    });
-}
-const drawDots = () => {
-    dots.forEach(dot => {
-        ctx.fillStyle = dot.color;
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI*2);
-        ctx.fill();
-    })
-}
-drawDots();
-banner.addEventListener('mousemove', (event) => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawDots();
-    let mouse = {
-        x:  event.pageX - banner.getBoundingClientRect().left,
-        y:  event.pageY - banner.getBoundingClientRect().top
-    }
-    dots.forEach(dot => {
-        let distance = Math.sqrt((mouse.x - dot.x) ** 2 + (mouse.y - dot.y) ** 2);
-        if(distance < 300){
-            ctx.strokeStyle = dot.color;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(dot.x, dot.y);
-            ctx.lineTo(mouse.x, mouse.y);
-            ctx.stroke();
+        let canvas = document.getElementById('dotsCanvas');
+        // set canvas size to banner size
+        canvas.width = banner.offsetWidth;
+        canvas.height = banner.offsetHeight;
+        const ctx = canvas.getContext('2d');
+        let dots = [];
+        const dotsCount = 100;
+        const arrayColors = ['#eee', '#545454', '#596d91', '#bb5a68', '#696541'];
+
+        // Dots initialization with velocity properties
+        for (let i = 0; i < dotsCount; i++) {
+            let angle = Math.random() * 2 * Math.PI;
+            let speed = Math.random() * 0.5 + 0.3; // Speeds range from 0.3 to 0.8
+            dots.push({
+                x:  Math.random() * canvas.width,
+                y:  Math.random() * canvas.height,
+                size: Math.random() * 3 + 5,
+                color: arrayColors[Math.floor(Math.random() * arrayColors.length)],
+                vx:  Math.cos(angle) * speed,
+                vy:  Math.sin(angle) * speed
+            });
         }
-    })
-})
-banner.addEventListener('mouseout', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawDots();
-})
-window.addEventListener('resize', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    canvas.width = banner.offsetWidth;
-    canvas.height = banner.offsetHeight;
 
+        // Draw dots
+        function drawDots() {
+            dots.forEach(dot => {
+                ctx.fillStyle = dot.color;
+                ctx.beginPath();
+                ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI*2);
+                ctx.fill();
+            });
+        }
 
-    dots = [];
-    for (let index = 0; index < 50; index++) {
-        dots.push({
-            x:  Math.floor(Math.random() * canvas.width),
-            y:  Math.floor(Math.random() * canvas.height),
-            size: Math.random() * 3 + 5,
-            color: arrayColors[Math.floor(Math.random()* 5)]
+        // Animate dots movement
+        function animateDots() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Move dots
+            dots.forEach(dot => {
+                dot.x += dot.vx;
+                dot.y += dot.vy;
+                // Bounce on canvas edges
+                if(dot.x <= dot.size || dot.x >= canvas.width - dot.size) dot.vx *= -1;
+                if(dot.y <= dot.size || dot.y >= canvas.height - dot.size) dot.vy *= -1;
+            });
+            drawDots();
+            // Draw lines to mouse if present
+            if(mouse.active) {
+                dots.forEach(dot => {
+                    let distance = Math.sqrt((mouse.x - dot.x) ** 2 + (mouse.y - dot.y) ** 2);
+                    if(distance < 300){
+                        ctx.strokeStyle = dot.color;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(dot.x, dot.y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                    }
+                });
+            }
+            requestAnimationFrame(animateDots);
+        }
+
+        // Track mouse for interactive lines
+        let mouse = {
+            x: 0,
+            y: 0,
+            active: false
+        };
+
+        banner.addEventListener('mousemove', (event) => {
+            const rect = banner.getBoundingClientRect();
+            mouse.x = event.clientX - rect.left;
+            mouse.y = event.clientY - rect.top;
+            mouse.active = true;
         });
-    }
-    drawDots();
-})
+
+        banner.addEventListener('mouseleave', () => {
+            mouse.active = false;
+        });
+
+        // Responsive: update canvas and dots on resize
+        window.addEventListener('resize', () => {
+            canvas.width = banner.offsetWidth;
+            canvas.height = banner.offsetHeight;
+            // reposition dots randomly
+            dots = [];
+            for (let i = 0; i < dotsCount; i++) {
+                let angle = Math.random() * 2 * Math.PI;
+                let speed = Math.random() * 0.5 + 0.3;
+                dots.push({
+                    x:  Math.random() * canvas.width,
+                    y:  Math.random() * canvas.height,
+                    size: Math.random() * 3 + 5,
+                    color: arrayColors[Math.floor(Math.random() * arrayColors.length)],
+                    vx:  Math.cos(angle) * speed,
+                    vy:  Math.sin(angle) * speed
+                });
+            }
+        });
+
+        // Initial drawing call
+        animateDots();
+
     </script>
 </body>
 </html>
-
