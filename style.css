@@ -1,1 +1,177 @@
+// script.js - particles, typing, tilt, reveals, cursor, smooth scroll
 
+// Helper: clamp
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+/* --- Canvas particle background --- */
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+let W = canvas.width = innerWidth;
+let H = canvas.height = innerHeight;
+const particles = [];
+const PARTICLE_COUNT = Math.round((W * H) / 50000); // scales with screen
+
+function rand(min, max){ return Math.random()*(max-min)+min; }
+
+function createParticles(){
+  particles.length = 0;
+  for(let i=0;i<PARTICLE_COUNT;i++){
+    particles.push({
+      x: rand(0,W),
+      y: rand(0,H),
+      vx: rand(-0.2,0.6),
+      vy: rand(-0.2,0.6),
+      r: rand(1,2.6),
+      hue: rand(170,310),
+      life: rand(80,260),
+    });
+  }
+}
+createParticles();
+
+window.addEventListener('resize', ()=>{
+  W = canvas.width = innerWidth;
+  H = canvas.height = innerHeight;
+  createParticles();
+});
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  // subtle gradient
+  const g = ctx.createLinearGradient(0,0,W,H);
+  g.addColorStop(0, 'rgba(10,14,28,0.35)');
+  g.addColorStop(1, 'rgba(2,6,23,0.35)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,W,H);
+
+  // draw particles
+  for(let p of particles){
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx += Math.sin((p.x+p.y)/5000)*0.002;
+    p.vy += Math.cos((p.y-p.x)/5000)*0.002;
+    if(p.x > W+30) p.x = -30;
+    if(p.x < -30) p.x = W+30;
+    if(p.y > H+30) p.y = -30;
+    if(p.y < -30) p.y = H+30;
+    const alpha = clamp(p.life/260, 0.12, 0.9);
+    ctx.beginPath();
+    const rad = p.r * (1 + 0.5*Math.sin(Date.now()/600 + p.x));
+    ctx.fillStyle = `hsla(${p.hue}deg,80%,60%,${alpha})`;
+    ctx.shadowColor = `hsla(${p.hue}deg,90%,60%,${alpha*0.9})`;
+    ctx.shadowBlur = 14;
+    ctx.arc(p.x, p.y, Math.max(0.8, rad), 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // connect near particles
+  for(let i=0;i<particles.length;i++){
+    for(let j=i+1;j<particles.length;j++){
+      const a = particles[i], b = particles[j];
+      const dx = a.x-b.x, dy = a.y-b.y;
+      const dist = Math.hypot(dx,dy);
+      if(dist < 110){
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(100,220,255,${0.08*(1 - dist/110)})`;
+        ctx.lineWidth = 1;
+        ctx.moveTo(a.x,a.y);
+        ctx.lineTo(b.x,b.y);
+        ctx.stroke();
+      }
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+/* --- Custom cursor --- */
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', (e)=>{
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+
+/* enlarge cursor on interactive items */
+const interactive = document.querySelectorAll('a, button, .card, .g-card');
+interactive.forEach(el=>{
+  el.addEventListener('mouseenter', ()=> {
+    cursor.style.transform = 'translate(-50%,-50%) scale(1.9)';
+    cursor.style.background = 'linear-gradient(90deg, rgba(255,77,255,0.95), rgba(0,230,255,0.95))';
+  });
+  el.addEventListener('mouseleave', ()=> {
+    cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+    cursor.style.background = 'linear-gradient(135deg,var(--accent2),var(--accent1))';
+  });
+});
+
+/* --- Typing effect --- */
+const typeText = document.getElementById('type-text');
+const words = ['micro-animations', 'pixel-perfect UI', 'fast interactions', 'neon vibes', 'motion-first sites'];
+let wi = 0, ci = 0, deleting = false;
+function typeLoop(){
+  const full = words[wi];
+  if(!deleting){
+    ci++;
+    typeText.textContent = full.slice(0,ci);
+    if(ci >= full.length){ deleting = true; setTimeout(typeLoop, 1400); return; }
+  } else {
+    ci--;
+    typeText.textContent = full.slice(0,ci);
+    if(ci <= 0){ deleting = false; wi = (wi+1)%words.length; setTimeout(typeLoop, 400); return; }
+  }
+  setTimeout(typeLoop, deleting ? 45 : 90);
+}
+typeLoop();
+
+/* --- Tilt on hover for .tilt elements --- */
+const tilts = document.querySelectorAll('[data-tilt]');
+tilts.forEach(el=>{
+  el.addEventListener('mousemove', (e)=>{
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    const rotY = (px - 0.5) * 12;
+    const rotX = (py - 0.5) * -10;
+    el.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(8px)`;
+    el.style.boxShadow = `${-rotY}px ${Math.abs(rotX)}px 30px rgba(24,32,64,0.45)`;
+  });
+  el.addEventListener('mouseleave', ()=>{
+    el.style.transform = '';
+    el.style.boxShadow = '';
+  });
+});
+
+/* --- Reveal on scroll --- */
+const observer = new IntersectionObserver((entries)=>{
+  for(let e of entries){
+    if(e.isIntersecting) e.target.classList.add('visible');
+  }
+}, {threshold:0.12});
+document.querySelectorAll('.section, .card, .g-card, .headline').forEach(el=>{
+  el.classList.add('reveal');
+  observer.observe(el);
+});
+
+/* --- Smooth scroll for nav anchors --- */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click', (ev)=>{
+    const href = a.getAttribute('href');
+    if(href.length > 1){
+      ev.preventDefault();
+      document.querySelector(href).scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+});
+
+/* --- Footer year --- */
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* --- Small performance tweak: pause expensive draws if not visible --- */
+let pageVisible = true;
+document.addEventListener('visibilitychange', ()=>{
+  pageVisible = !document.hidden;
+  if(pageVisible) requestAnimationFrame(draw);
+});
+
+/* End of script.js */
