@@ -1,19 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Warnet Sim Web 2026</title>
+    <meta charset="UTF-8">
+    <title>Cyber Clicker 2026</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
-        <h1>Warnet Simulator 2026</h1>
-        <div id="stats">
-            Uang: Rp <span id="money">5000</span>
+        <div class="header">
+            <h1>CYBER CLICKER</h1>
+            <div id="coin-display">🪙 <span id="coins">0</span></div>
         </div>
-        <div class="room">
-            <div class="pc-slot" onclick="mulaiBilling()">
-                <p>PC 01</p>
-                <span id="status">Kosong</span>
+
+        <button id="click-btn">CLICK ME!</button>
+
+        <div class="shop">
+            <h3>🛒 UPGRADE SHOP</h3>
+            <div class="shop-item" onclick="buyUpgrade(2, 50)">
+                <span>2x Click Multiplier</span>
+                <button>Price: 50</button>
+            </div>
+            <div class="shop-item" onclick="buyUpgrade(4, 120)">
+                <span>4x Click Multiplier</span>
+                <button>Price: 120</button>
+            </div>
+            <div class="shop-item" onclick="buyUpgrade(8, 500)">
+                <span>8x Click Multiplier</span>
+                <button>Price: 500</button>
+            </div>
+            <hr>
+            <div class="shop-item" onclick="buyAutoMachine()">
+                <span>Auto Machine (10c/10s)</span>
+                <button id="machine-btn">Price: 300</button>
             </div>
         </div>
     </div>
