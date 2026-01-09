@@ -3,139 +3,113 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Super Cool Site — Pull-Up Attraction</title>
+  <title>Neon Motion — Cool Animated Site</title>
 
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Rubik:wght@700&display=swap" rel="stylesheet">
 
+  <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
+
+  <!-- Meta for theme -->
+  <meta name="theme-color" content="#0b1020">
 </head>
 <body>
-  <!-- Canvas background for particles -->
+  <!-- Canvas background -->
   <canvas id="bg"></canvas>
 
-  <header class="top">
-    <nav class="nav container">
-      <div class="logo">Attractiva</div>
-      <ul class="nav-links">
-        <li><a href="#features">Features</a></li>
-        <li><a href="#works">How it works</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <a class="logo" href="#hero">NeonMotion</a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header id="hero" class="hero">
+    <div class="hero-inner">
+      <h1 class="headline">We craft <span class="neon">electrifying</span>  experiences</h1>
+      <p class="sub">Animations, micro-interactions, and motion-first design — built with HTML, CSS & JavaScript.</p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#features">Explore Features</a>
+        <a class="btn ghost" href="#contact">Get in touch</a>
+      </div>
+      <div class="type-wrap">We make <span id="type-text"></span><span class="blink">|</span></div>
+    </div>
+
+    <!-- Floating blobs -->
+    <div class="blobs">
+      <div class="blob b1"></div>
+      <div class="blob b2"></div>
+      <div class="blob b3"></div>
+    </div>
   </header>
 
-  <main>
-    <section class="hero container">
-      <div class="hero-left">
-        <h1 class="headline">
-          Build a site that pulls people in.
-          <span class="headline-gradient">Attraction · Motion · Wow</span>
-        </h1>
-        <p class="lead">
-          A modern, animated landing page with magnetic interactions and smooth pull-up reveals.
-          Lightweight, responsive and ready to customize.
-        </p>
-        <div class="hero-ctas">
-          <button class="btn primary magnetic" id="get-started">Get started</button>
-          <a class="btn ghost" href="#features">See features</a>
-        </div>
-        <div class="kpis reveal">
-          <div class="kpi">
-            <strong>3.2s</strong><span>Avg session</span>
-          </div>
-          <div class="kpi">
-            <strong>+78%</strong><span>Engagement</span>
-          </div>
-          <div class="kpi">
-            <strong>∞</strong><span>Possibilities</span>
-          </div>
-        </div>
-      </div>
+  <!-- Features -->
+  <section id="features" class="section features">
+    <h2 class="section-title">Features</h2>
+    <p class="section-lead">A small collection of tiny delights that make big impressions.</p>
 
-      <div class="hero-right">
-        <!-- Floating card (tilt + pull up) -->
-        <div class="card demo-card reveal magnetic-tilt">
-          <div class="card-tag">Prototype</div>
-          <h3>Interactive 3D Card</h3>
-          <p>Hover, move the cursor and feel it come alive. Scroll to reveal more content.</p>
-          <div class="card-cta">
-            <button class="btn small primary magnetic">Try it</button>
-          </div>
+    <div class="cards">
+      <article class="card tilt" data-tilt>
+        <div class="card-icon">✨</div>
+        <h3>Micro-interactions</h3>
+        <p>Small animations that guide the eye and delight users on every click and hover.</p>
+      </article>
+
+      <article class="card tilt" data-tilt>
+        <div class="card-icon">🎨</div>
+        <h3>Color & Motion</h3>
+        <p>Vibrant gradients, neon glow, and fluid motion to make content pop.</p>
+      </article>
+
+      <article class="card tilt" data-tilt>
+        <div class="card-icon">🚀</div>
+        <h3>Performance</h3>
+        <p>Canvas-driven effects and optimized JS for smooth 60fps animations.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section id="gallery" class="section gallery">
+    <h2 class="section-title">Gallery</h2>
+    <div class="gallery-grid">
+      <div class="g-item">
+        <div class="g-card">
+          <div class="g-overlay">Hover me</div>
+          <img src="https://picsum.photos/600/400?random=1" alt="">
         </div>
       </div>
-    </section>
-
-    <section id="features" class="features container">
-      <h2 class="section-title reveal">Features you'll love</h2>
-      <div class="grid">
-        <article class="feature-card reveal magnetic-tilt">
-          <div class="icon">✨</div>
-          <h3>Pull-up reveals</h3>
-          <p>Elements animate up with momentum as you scroll — smooth and delightful.</p>
-        </article>
-
-        <article class="feature-card reveal magnetic-tilt">
-          <div class="icon">🧲</div>
-          <h3>Magnetic interactions</h3>
-          <p>Buttons and cards slightly follow the cursor to create an interactive feel.</p>
-        </article>
-
-        <article class="feature-card reveal magnetic-tilt">
-          <div class="icon">⚛️</div>
-          <h3>Particle background</h3>
-          <p>Particles respond to your cursor — like attraction fields across the page.</p>
-        </article>
-
-        <article class="feature-card reveal magnetic-tilt">
-          <div class="icon">📱</div>
-          <h3>Responsive ready</h3>
-          <p>Looks great on phones, tablets and desktops — with accessible interactions.</p>
-        </article>
-      </div>
-    </section>
-
-    <section id="works" class="how container">
-      <h2 class="section-title reveal">How it works</h2>
-      <div class="steps">
-        <div class="step reveal">
-          <div class="num">01</div>
-          <h4>Ready-made motion</h4>
-          <p>Built-in CSS and JS patterns for reveal, tilt and magnetism — drop them into any project.</p>
-        </div>
-
-        <div class="step reveal">
-          <div class="num">02</div>
-          <h4>Customizable</h4>
-          <p>Tweak variables in CSS or the particle script for different feels and speed.</p>
-        </div>
-
-        <div class="step reveal">
-          <div class="num">03</div>
-          <h4>Go live</h4>
-          <p>Open index.html or host it — it's static and super fast.</p>
+      <div class="g-item">
+        <div class="g-card">
+          <div class="g-overlay">Hover me</div>
+          <img src="https://picsum.photos/600/400?random=2" alt="">
         </div>
       </div>
-    </section>
-
-    <section id="contact" class="contact container">
-      <h2 class="section-title reveal">Let's build something</h2>
-      <form class="contact-form reveal" aria-label="Contact form">
-        <input type="text" name="name" placeholder="Your name" required />
-        <input type="email" name="email" placeholder="Email" required />
-        <textarea name="message" placeholder="Tell me what you want..." rows="4"></textarea>
-        <div class="form-ctas">
-          <button type="submit" class="btn primary magnetic">Send</button>
-          <button type="button" class="btn ghost">Maybe later</button>
+      <div class="g-item">
+        <div class="g-card">
+          <div class="g-overlay">Hover me</div>
+          <img src="https://picsum.photos/600/400?random=3" alt="">
         </div>
-      </form>
-    </section>
-  </main>
+      </div>
+    </div>
+  </section>
 
-  <footer class="site-footer">
-    <div class="container">© <span id="year"></span> Attractiva — built with motion.</div>
-  </footer>
+  <!-- Contact -->
+  <section id="contact" class="section contact">
+    <h2 class="section-title">Contact</h2>
+    <p class="section-lead">Want this for your project? Drop a line.</p>
 
-  <script src="script.js" defer></script>
-</body>
-</html>
+    <form class="contact-form" onsubmit="event.preventDefault(); alert('Message sent — demo only!');">
+      <div class="row">
+        <input type="text" name="name" placeholder="Your name" required>
+        <input type="email" name="email" placeholder="Email" required>
+      </div>
+     
