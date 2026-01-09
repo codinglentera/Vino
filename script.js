@@ -1,18 +1,39 @@
-let uang = 5000;
-let isPlaying = false;
+let coins = 0;
+let multiplier = 1;
+let hasMachine = false;
 
-function mulaiBilling() {
-    if (!isPlaying) {
-        isPlaying = true;
-        document.getElementById("status").innerText = "Bermain...";
-        
-        // Simulasi pelanggan main selama 3 detik
-        setTimeout(() => {
-            uang += 2000;
-            document.getElementById("money").innerText = uang;
-            document.getElementById("status").innerText = "Kosong";
-            isPlaying = false;
-            alert("Pelanggan selesai! Anda dapat Rp 2.000");
-        }, 3000);
+const coinText = document.getElementById("coins");
+const clickBtn = document.getElementById("click-btn");
+
+clickBtn.addEventListener("click", () => {
+    coins += (1 * multiplier);
+    updateUI();
+});
+
+function buyUpgrade(mult, price) {
+    if (coins >= price) {
+        coins -= price;
+        multiplier = mult;
+        alert("Upgrade Success! Now x" + mult);
+        updateUI();
+    } else {
+        alert("Not enough coins!");
     }
+}
+
+function buyAutoMachine() {
+    if (coins >= 300 && !hasMachine) {
+        coins -= 300;
+        hasMachine = true;
+        document.getElementById("machine-btn").innerText = "OWNED";
+        setInterval(() => {
+            coins += 10;
+            updateUI();
+        }, 10000); // 10 seconds
+        updateUI();
+    }
+}
+
+function updateUI() {
+    coinText.innerText = coins;
 }
