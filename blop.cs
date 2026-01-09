@@ -1,18 +1,19 @@
-// Contoh skrip sederhana untuk mendeteksi komponen PC di meja
-public class MejaSensor : MonoBehaviour {
-    public bool isHasMonitor, isHasCPU, isHasKeyboard;
+using System;
 
-    void OnTriggerEnter(Collider other) {
-        if (other.CompareTag("Monitor")) isHasMonitor = true;
-        if (other.CompareTag("CPU")) isHasCPU = true;
-        if (other.CompareTag("Keyboard")) isHasKeyboard = true;
+public class ClickerGame {
+    public int Coins = 0;
+    public int Multiplier = 1;
 
-        CheckPCReady();
+    public void OnClick() {
+        Coins += (1 * Multiplier);
+        Console.WriteLine("Coins: " + Coins);
     }
 
-    void CheckPCReady() {
-        if (isHasMonitor && isHasCPU && isHasKeyboard) {
-            Debug.Log("PC Siap Digunakan!");
+    public void BuyUpgrade(int m, int price) {
+        if (Coins >= price) {
+            Coins -= price;
+            Multiplier = m;
+            Console.WriteLine("Upgraded to x" + m);
         }
     }
 }
