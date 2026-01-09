@@ -1,13 +1,13 @@
-public class WarnetBilling {
+public class GameCore {
     public static void main(String[] args) {
-        int saldo = 5000;
-        int hargaPerJam = 3000;
+        int coins = 500; // Example starting
+        int multiplier = 1;
         
-        System.out.println("Sistem Billing Warnet 2026 Aktif");
-        System.out.println("Saldo Awal: " + saldo);
-        
-        // Logika penambahan saldo
-        saldo += hargaPerJam;
-        System.out.println("Satu jam berlalu. Saldo Baru: " + saldo);
+        // Buy 8x Upgrade logic
+        if (coins >= 500) {
+            coins -= 500;
+            multiplier = 8;
+            System.out.println("Upgrade 8x Activated!");
+        }
     }
 }
