@@ -1,40 +1,121 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Cyber Clicker 2026</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Growtopia Web Clone</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #222; font-family: 'Arial', sans-serif; }
+        canvas { display: block; background: #87CEEB; /* Sky Blue */ }
+        #ui {
+            position: absolute; top: 10px; left: 10px;
+            color: white; text-shadow: 2px 2px 4px #000;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="header">
-            <h1>CYBER CLICKER</h1>
-            <div id="coin-display">🪙 <span id="coins">0</span></div>
-        </div>
 
-        <button id="click-btn">CLICK ME!</button>
+<div id="ui">
+    <h1>Growtopia JS</h1>
+    <p>Gerak: WASD | Klik Kiri: Pasang/Hancur | Slot: 1-Dirt, 2-Grass</p>
+    <div id="inventory">Pilihan: <b id="selected">Dirt</b></div>
+</div>
 
-        <div class="shop">
-            <h3>🛒 UPGRADE SHOP</h3>
-            <div class="shop-item" onclick="buyUpgrade(2, 50)">
-                <span>2x Click Multiplier</span>
-                <button>Price: 50</button>
-            </div>
-            <div class="shop-item" onclick="buyUpgrade(4, 120)">
-                <span>4x Click Multiplier</span>
-                <button>Price: 120</button>
-            </div>
-            <div class="shop-item" onclick="buyUpgrade(8, 500)">
-                <span>8x Click Multiplier</span>
-                <button>Price: 500</button>
-            </div>
-            <hr>
-            <div class="shop-item" onclick="buyAutoMachine()">
-                <span>Auto Machine (10c/10s)</span>
-                <button id="machine-btn">Price: 300</button>
-            </div>
-        </div>
-    </div>
-    <script src="script.js"></script>
+<canvas id="gameCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const selectedLabel = document.getElementById('selected');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Konfigurasi Game
+const TILE_SIZE = 32;
+const GRAVITY = 0.5;
+const player = {
+    x: 100, y: 100, w: 24, h: 30,
+    vx: 0, vy: 0, speed: 4, jump: -10,
+    grounded: false, color: "#ffccaa"
+};
+
+let world = {};
+let selectedBlock = 1; // 1: Dirt, 2: Grass
+
+// Generate Lantai Dasar
+for(let x = 0; x < Math.ceil(canvas.width / TILE_SIZE); x++) {
+    for(let y = 15; y < 25; y++) {
+        world[`${x},${y}`] = (y === 15) ? 2 : 1;
+    }
+}
+
+const keys = {};
+window.onkeydown = (e) => { keys[e.key.toLowerCase()] = true; if(e.key === '1') selectedBlock = 1; if(e.key === '2') selectedBlock = 2; };
+window.onkeyup = (e) => keys[e.key.toLowerCase()] = false;
+
+// Interaksi Mouse (Pasang/Hancur)
+canvas.onmousedown = (e) => {
+    const tx = Math.floor(e.clientX / TILE_SIZE);
+    const ty = Math.floor(e.clientY / TILE_SIZE);
+    const key = `${tx},${ty}`;
+    
+    if (world[key]) {
+        delete world[key]; // Hancurkan
+    } else {
+        world[key] = selectedBlock; // Pasang
+    }
+};
+
+function update() {
+    // Movement
+    if (keys['a']) player.vx = -player.speed;
+    else if (keys['d']) player.vx = player.speed;
+    else player.vx *= 0.8;
+
+    if (keys['w'] && player.grounded) {
+        player.vy = player.jump;
+        player.grounded = false;
+    }
+
+    player.vy += GRAVITY;
+    player.x += player.vx;
+    player.y += player.vy;
+
+    // Simple Collision (Lantai Dasar saja)
+    player.grounded = false;
+    const tx = Math.floor((player.x + player.w/2) / TILE_SIZE);
+    const ty = Math.floor((player.y + player.h) / TILE_SIZE);
+    
+    if (world[`${tx},${ty}`]) {
+        player.y = ty * TILE_SIZE - player.h;
+        player.vy = 0;
+        player.grounded = true;
+    }
+
+    selectedLabel.innerText = selectedBlock === 1 ? "Dirt" : "Grass";
+    draw();
+    requestAnimationFrame(update);
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw World
+    for (let key in world) {
+        const [x, y] = key.split(',').map(Number);
+        ctx.fillStyle = world[key] === 2 ? "#44aa44" : "#885522";
+        ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        ctx.strokeStyle = "rgba(0,0,0,0.1)";
+        ctx.strokeRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    }
+
+    // Draw Player
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x, player.y, player.w, player.h);
+}
+
+update();
+</script>
 </body>
 </html>
